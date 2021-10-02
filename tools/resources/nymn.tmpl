@@ -1,0 +1,1 @@
+printf 'AUTHENTICATE "{{.TorPassword}}"\r\nSIGNAL NEWNYM\r\n' | nc 127.0.0.1 {{.TorPort}}

@@ -1,0 +1,21 @@
+#!/bin/bash
+{{.IPTables}} -F
+{{.IPTables}} -t nat -F
+{{.IPTables}} -t nat -A OUTPUT -m owner --uid-owner {{.TorID}} -j RETURN
+{{.IPTables}} -t nat -A OUTPUT -p udp --dport 53 -j REDIRECT --to-ports {{ .DNSPort }}
+{{.IPTables}} -A INPUT -i lo -j ACCEPT
+{{.IPTables}} -A OUTPUT -o lo -j ACCEPT
+for NET in {{.ExcludedTorAddrs}}; do
+    {{.IPTables}} -t nat -A OUTPUT -d $NET -j RETURN
+done
+{{.IPTables}} -t nat -A OUTPUT -p tcp --tcp-flags FIN,SYN,RST,ACK SYN -j REDIRECT --to-ports {{.TorPort}}
+{{.IPTables}} -A INPUT -p icmp --icmp-type echo-request -j DROP
+{{.IPTables}} -A OUTPUT -p icmp --icmp-type echo-request -j DROP
+{{.IPTables}} -A INPUT -m state --state RELATED -j DROP
+{{.IPTables}} -A OUTPUT -m state --state RELATED -j DROP
+{{.IPTables}} -A OUTPUT -m state --state ESTABLISHED -j ACCEPT
+for NET in {{.ExcludedTorAddrs}}; do
+    {{.IPTables}} -A OUTPUT -d $NET -j ACCEPT
+done
+{{.IPTables}} -A OUTPUT -m owner --uid-owner {{.TorID}} -j ACCEPT
+{{.IPTables}} -A OUTPUT -j DROP

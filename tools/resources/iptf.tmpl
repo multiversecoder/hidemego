@@ -1,0 +1,8 @@
+#!/bin/bash
+{{.IPTables}} -P INPUT ACCEPT
+{{.IPTables}} -P FORWARD ACCEPT
+{{.IPTables}} -P OUTPUT ACCEPT
+{{.IPTables}} -t nat -F
+{{.IPTables}} -t mangle -F
+{{.IPTables}} -F
+{{.IPTables}} -X

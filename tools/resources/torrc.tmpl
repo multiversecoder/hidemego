@@ -1,0 +1,23 @@
+# DO NOT EDIT
+AvoidDiskWrites 1
+GeoIPExcludeUnknown 1
+SocksPort 127.0.0.1:{{ .SocksDestPort}} IsolateDestAddr IsolateDestPort
+SocksPort 127.0.0.1:{{ .SocksAuthPort}} IsolateSOCKSAuth KeepAliveIsolateSOCKSAuth
+DataDirectory {{.DataDir}}
+{{ if .HasTorControl}}
+ControlPort {{ .ControlPort }}
+CookieAuthentication 1
+HashedControlPassword {{ .TPass }}
+{{ end }}
+VirtualAddrNetworkIPv4 10.0.0.0/10
+AutomapHostsOnResolve 1
+AutomapHostsSuffixes .exit,.onion
+ExcludeExitNodes {us},{au},{ca},{nz},{gb},{fr},{sg},{jp},{kp},{se},{il},{es},{it},{no},{dk},{nl},{be}
+NodeFamily {{.Countries}}
+StrictNodes 1
+TransPort {{.TorPort}} IsolateClientAddr IsolateClientProtocol IsolateDestAddr IsolateDestPort
+DNSPort {{ .DNSPort }}
+WarnPlaintextPorts 23,109,110,143
+PathsNeededToBuildCircuits 0.95
+IPv6Exit 0
+
